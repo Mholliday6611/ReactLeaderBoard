@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import leaderApi from "../utils/api"
 
-class Finish extends Component {
+class FinishStudent extends Component {
 	constructor(){
 		super()
 
@@ -22,7 +22,7 @@ class Finish extends Component {
 
 	handleSubmit(event){
 		event.preventDefault();
-		leaderApi.finish({
+		leaderApi.finishStudent({
 			first_name : this.state.first_name,
 			last_name : this.state.last_name,
 			bio : this.state.bio,
@@ -30,7 +30,7 @@ class Finish extends Component {
 			linkedin : this.state.linkedin,
 			password : this.state.password,
 		},
-		this.props.id)
+		this.props.match.params.id)
 		.then()
 		.catch()
 	}
@@ -51,3 +51,5 @@ class Finish extends Component {
 			)
 	}
 }
+
+export default FinishStudent

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import leaderApi from "../utils/api"
 import AddStudent from "./AddStudent"
+import { Link } from "react-router-dom"
 
 class ClassDisplay extends Component{
 	constructor(){
@@ -11,25 +12,29 @@ class ClassDisplay extends Component{
 		}
 	}
 	componentDidMount(){
-		console.log(this.props)
 		leaderApi.getTeacher(this.props.teachers)
 			.then(response => this.setState({teachers:response.data}))
+
+		leaderApi.getStudents(this.props.params.id)
+			.then(response => this.setState({students:response.data}) )
+			.catch(err=>console.log(err))
 		
 	}
 	render(){
-		console.log(this.state)
 		var teachers = this.state.teachers.map(i=> <li>{i.email}</li>)
+		var students = this.state.students.map(i => <li>{i.email}{i.first_name}{i.last_name}</li>)
 		return(
 			<div>
 				<h1>{this.props.name}</h1>
 				<p>{this.props.description}</p>
+				<Link to={`/class/taskmanager/${this.props.id}`}><h1>TASK MANAGER</h1></Link>
 				<h3>Teachers</h3>
 				<ul>
 					{teachers}
 				</ul>
 				<h3>Students</h3>
 				<ul>
-					{this.state.students}
+					{students}
 				</ul>
 			</div>
 		)
@@ -43,8 +48,12 @@ class ClassDashboard extends Component {
 		this.state ={
 			info: ""
 		}
+		this.getClass = this.getClass.bind(this)
 	}
 	componentDidMount(props){
+		this.getClass()
+	}
+	getClass(){
 		leaderApi.viewClass(this.props.match.params.id)
 		.then(info => {
 			this.setState({
@@ -52,21 +61,13 @@ class ClassDashboard extends Component {
 			})
 		})
 	}
-
-	addStudent(){
-		leaderApi.addStudent()
-	}
-
 	render(){
-		if(this.state.info != ""){
-			var display = <ClassDisplay name={this.state.info.name} description={this.state.info.description} teachers={this.state.info.teachers} />
-		}
-		if(localStorage.getItem("type") == "teacher")
-		console.log(this.state.info.teachers)
 		return(
 				<div>
-					{display}
-					<AddStudent id={this.props.match.params.id}/>
+					{this.state.info !== "" &&
+					<ClassDisplay name={this.state.info.name} description={this.state.info.description} teachers={this.state.info.teachers} id={this.props.match.params.id} params={this.props.match.params}/>}
+
+					<AddStudent id={this.props.match.params.id} up={this.getClass}/>
 				</div>
 			)
 	}

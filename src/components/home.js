@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import leaderApi from "../utils/api"
+import {Redirect} from "react-router-dom"
 
 class Home extends Component {
 
@@ -8,7 +9,10 @@ class Home extends Component {
 
 		this.state={
 			email: '',
-			password: ''
+			password: '',
+			admin:false,
+			teacher:false,
+			student:false
 		}
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleChange = this.handleChange.bind(this)
@@ -29,20 +33,45 @@ class Home extends Component {
 			email : this.state.email,
 			password : this.state.password
 		})
-		.then(function(response){
-			localStorage.setItem("token", response.data.token)
-			localStorage.setItem("type", response.data.type)
+		.then(response =>{
+			localStorage.setItem("token", response.data.token);
+			localStorage.setItem("type", response.data.type);
+			if(response.data.type === "teacher"){
+				this.setState({
+					teacher:true
+				})
+			}else if(response.data.type === "student"){
+
+			}else if(response.data.type === "admin"){
+				this.setState({
+					admin:true
+				})
+			}
 		})
 		.catch()
 	}
 
 	render(){
+		if(this.state.admin){
+			return(<Redirect to="/admindashboard"/>)
+		}
+		if(this.state.teacher){
+			return(<Redirect to="/teacherdashboard"/>)
+		}
 		return(
-			<div>
-				<form onSubmit={this.handleSubmit}>
-					<input placeholder="Email" name="email"  onChange={this.handleChange}/>
-					<input placeholder="Password" type="password" name="password" onChange={this.handleChange}/>
-					<input type="submit" />
+			<div className="section columns">
+				<form className="column is-half is-offset-one-quarter" onSubmit={this.handleSubmit}>
+					<div className="field">
+						<div className="control">
+							<input placeholder="Email" name="email" className="input is-medium"  onChange={this.handleChange}/>
+						</div>
+					</div>
+					<div className="field">
+						<div className="control">
+							<input placeholder="Password" className="input is-medium" type="password" name="password" onChange={this.handleChange}/>
+						</div>
+					</div>
+						<center><input className="button is-right" type="submit" /></center>
 				</form>
 			</div>
 			)
