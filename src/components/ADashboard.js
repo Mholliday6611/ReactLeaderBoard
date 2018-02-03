@@ -24,7 +24,7 @@ class ClassDisplay extends Component{
 		console.log(this.state)
 		var teachers = this.state.teachers.map(i=> i.email)
 		return(
-			<div>
+			<div> 
 				<Link to={`/class/${this.props.id}`}>{this.props.name}</Link>
 				{this.props.description}
 				{teachers}
