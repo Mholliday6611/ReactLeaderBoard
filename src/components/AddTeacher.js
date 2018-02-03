@@ -24,13 +24,17 @@ class AddTeacher extends Component {
 		event.preventDefault();
 		leaderApi.addTeacher({
 			email : this.state.email,
+			value: ""
 		},
 		this.props.id)
-		.then()
+		.then(response=> {
+			this.props.up()
+		} )
 		.catch()
 	}
 
 	render(){
+		console.log(this.props)
 		return(
 			<div>
 				<form onSubmit={this.handleSubmit}>

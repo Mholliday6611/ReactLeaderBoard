@@ -24,7 +24,7 @@ class App extends Component {
 
             <Route exact path='/admindashboard' component={ADashboard} />
             <Route exact path='/teacherdashboard' component={TDashboard} />
-            <Route exact path='/studentdashboard' component={SDashboard} />
+            
              {/* 
             <Route exact path='/studentdashboard' component={SDashboard} />
               */}

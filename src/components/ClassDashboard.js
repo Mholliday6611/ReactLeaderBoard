@@ -10,8 +10,12 @@ class ClassDisplay extends Component{
 			teachers: [],
 			students: []
 		}
+		this.updateInfo = this.updateInfo.bind(this)
 	}
 	componentDidMount(){
+		this.updateInfo()
+	}
+	updateInfo(){
 		leaderApi.getTeacher(this.props.teachers)
 			.then(response => this.setState({teachers:response.data}))
 
@@ -62,12 +66,11 @@ class ClassDashboard extends Component {
 		})
 	}
 	render(){
+		var display = <ClassDisplay name={this.state.info.name} description={this.state.info.description} teachers={this.state.info.teachers} id={this.props.match.params.id} params={this.props.match.params}/>
 		return(
 				<div>
-					{this.state.info !== "" &&
-					<ClassDisplay name={this.state.info.name} description={this.state.info.description} teachers={this.state.info.teachers} id={this.props.match.params.id} params={this.props.match.params}/>}
-
-					<AddStudent id={this.props.match.params.id} up={this.getClass}/>
+					{display}
+					<AddStudent id={this.props.match.params.id} up={this.getClass} />
 				</div>
 			)
 	}

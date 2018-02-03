@@ -34,6 +34,7 @@ class Home extends Component {
 			password : this.state.password
 		})
 		.then(response =>{
+			console.log(response)
 			localStorage.setItem("token", response.data.token);
 			localStorage.setItem("type", response.data.type);
 			if(response.data.type === "teacher"){
@@ -48,7 +49,9 @@ class Home extends Component {
 				})
 			}
 		})
-		.catch()
+		.catch(err=>{
+			console.log(err)
+		})
 	}
 
 	render(){

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = "http://localhost:8080/"
+const baseURL = "https://leaderboardtesting.herokuapp.com/"
 var token = localStorage.getItem("token")
 var header = {headers: {'Authorization': "bearer " + token}}
 

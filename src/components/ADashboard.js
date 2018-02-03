@@ -9,12 +9,16 @@ class ClassDisplay extends Component{
 		this.state = {
 			teachers: []
 		}
+		this.updateTeachers = this.updateTeachers.bind(this)
 	}
 	componentDidMount(){
-		console.log(this.props.teachers)
+		this.updateTeachers()
+		
+	}
+	updateTeachers(){
+		this.props.up()
 		leaderApi.getTeacher(this.props.teachers)
 			.then(response => this.setState({teachers:response.data}))
-		
 	}
 	render(){
 		console.log(this.state)
@@ -24,7 +28,7 @@ class ClassDisplay extends Component{
 				<Link to={`/class/${this.props.id}`}>{this.props.name}</Link>
 				{this.props.description}
 				{teachers}
-				<AddTeacher id={this.props.id}/>
+				<AddTeacher id={this.props.id} up={this.updateTeachers} />
 			</div>
 		)
 	}
@@ -117,7 +121,7 @@ class ADashboard extends Component {
 			var classDisplay = "Not Allowed"
 		}else{
 			console.log(this.state)
-		var classDisplay = this.state.classes.map((item, index) =><ClassDisplay name={item.name} description={item.description} id={item._id} teachers={item.teachers}/>)
+		var classDisplay = this.state.classes.map((item, index) =><ClassDisplay name={item.name} description={item.description} id={item._id} teachers={item.teachers} up={this.updateClasses}/>)
 		}
 		return(
 				<div>

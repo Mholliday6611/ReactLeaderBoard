@@ -47,7 +47,8 @@ class Task extends Component {
 	render(){
 		let tasks = ""
 		if(this.props.ec==false){
-			tasks = this.props.tasks.map(
+			tasks = this.props.tasks.filter(i => i.extraCredit !== true)
+			tasks = tasks.map(
 			i=> <tr>
 					<td> {i.name}</td>
 					<td>{i.description}</td>
@@ -56,7 +57,7 @@ class Task extends Component {
 				</tr>
 			)
 		}else{
-			tasks = this.props.tasks.filter(i => i.ec == true)
+			tasks = this.props.tasks.filter(i => i.extraCredit == true)
 			tasks = tasks.map(
 			i=> <tr>
 					<td> {i.name}</td>
@@ -125,6 +126,7 @@ class SubmitTask extends Component{
 		.then(response=>{
 			this.props.up()
 			this.props.close("taskOpen")
+			this.props.close("ecOpen")
 		})
 		.catch()
 	}
