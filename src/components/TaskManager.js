@@ -53,7 +53,7 @@ class Task extends Component {
 					<td> {i.name}</td>
 					<td>{i.description}</td>
 					<td>{i.due}</td>
-					<td><button>Edit</button><button>Grade</button></td>	
+					<td><a style={{marginRight: "10px"}} className="button">Edit</a><a className="button" onClick={()=> this.props.beginGrading(i._id)}>Grade</a></td>	
 				</tr>
 			)
 		}else{
@@ -63,7 +63,7 @@ class Task extends Component {
 					<td> {i.name}</td>
 					<td>{i.description}</td>
 					<td>{i.due}</td>
-					<td><button>Edit</button><button>Grade</button></td>	
+					<td><a style={{marginRight: "10px"}} className="button">Edit</a><a className="button" onClick={()=> this.props.beginGrading(i._id)}>Grade</a></td>	
 				</tr>
 			)
 		}
@@ -87,10 +87,51 @@ class Task extends Component {
 }
 
 class GradeTask extends Component {
+	constructor(){
+		super()
+
+		this.state = {
+
+		}
+	}
+
+	componentDidMount(){
+		leaderApi.getStudents(this.props.params)
+			.then(response =>{
+				this.setState({
+					students: response.data
+				})
+			}).then(response => {
+				var newStudents = this.state.students.map(i=>{
+					leaderApi.getSubmittedTask(i._id,this.props.id)
+						.then(response => i.submittedTask = response.data)
+						return i
+				})
+			})	
+	}
+	componentWillReceiveProps(nextProps){
+	}
 
 	render(){
+		var students = this.state.students.map(i=>{
+			<tr>
+				<td>{i.email}</td>
+				<td>{i.submittedTask.info}</td>
+			</tr>
+		})
 		return(
 				<div>
+					<table>
+						<tr>
+							<th>
+								Student
+							</th>
+							<th>
+								Submission
+							</th>
+						</tr>
+						{students}
+					</table>
 				</div>
 			)
 	}
@@ -205,6 +246,8 @@ class TaskManager extends Component {
 			compOpen: false,
 			taskOpen:false,
 			gradeTask: false,
+			currentlyGrading: "",
+
 			gradeEc: false,
 			ecOpen: false,
 			compentencyTab: true,
@@ -216,6 +259,7 @@ class TaskManager extends Component {
 		this.updateTasks = this.updateTasks.bind(this)
 		this.updateComps = this.updateComps.bind(this)
 		this.addTaskToComp = this.addTaskToComp.bind(this)
+		this.beginGrading = this.beginGrading.bind(this)
 		this.useTab = this.useTab.bind(this)
 	}
 
@@ -246,6 +290,21 @@ class TaskManager extends Component {
 				compentencies: info.data
 			})
 		})
+	}
+
+	beginGrading(id){
+		console.log(id)
+		if(this.state.gradeTask){
+			this.setState({
+				gradeTask: false,
+				currentlyGrading:""
+			})
+		}else{
+			this.setState({
+				gradeTask: true,
+				currentlyGrading: id
+			})
+		}
 	}
 	useTab(x){
 		this.setState({
@@ -308,28 +367,26 @@ class TaskManager extends Component {
 
 					<Comp taskChoices={this.state.tasks} addTaskToComp={this.addTaskToComp} compentencies={this.state.compentencies}/>
 
-					<button onClick={()=>this.openModal("compOpen")}>Add Compentency</button>
-				</div>}
-				{this.state.taskTab &&
+					<a className="button" onClick={()=>this.openModal("compOpen")}>Add Compentency</a>
+				</div>}				{this.state.taskTab &&
 				<div className="taskTab">
 					<h1>Task</h1>
-					<button>All Tasks</button><button>Grade</button>
 
-					<Task tasks={this.state.tasks} ec={false}/>
-					<GradeTask />
+					{this.state.gradeTask? <GradeTask params={this.props.match.params.id} id={this.state.currentlyGrading} /> : <Task tasks={this.state.tasks} beginGrading={this.beginGrading} ec={false}/> 
+					}
 
-					<button name="taskOpen" onClick={()=>this.openModal("taskOpen")}>Add Task</button>
+					<a className="button" name="taskOpen" onClick={()=>this.openModal("taskOpen")}>Add Task</a>
 				</div>}
 				{this.state.ExtraCreditTab &&
 				<div className="ExtraCreditTab"> 
 					<h1>Extra Credit</h1>
-					<button>All Tasks</button><button>Grade</button>
+					<a className="a">All Tasks</a><a>Grade</a>
 					<br/>
 
 					<Task tasks={this.state.tasks} ec={true}/>
 					<GradeTask />
 
-					<button name="ecOpen" onClick={()=>this.openModal("ecOpen")}>Add Extra Credit</button>
+					<a className="button" name="ecOpen" onClick={()=>this.openModal("ecOpen")}>Add Extra Credit</a>
 				</div>}
 
 

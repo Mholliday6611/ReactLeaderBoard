@@ -55,6 +55,26 @@ class AttendanceTable extends Component {
 
 		}
 		this.handleChange = this.handleChange.bind(this)
+		this.markAttendance = this.markAttendance.bind(this)
+	}
+	componentWillReceiveProps(nextProps){
+		for(var i = 0; i<this.props.students.length; i++){
+			let id = this.props.students[i]._id
+			leaderApi.getStudentAttendance(this.props.students[i]._id, nextProps.attendId)
+			.then(response => {
+				if(response.data.length !== 0){
+					this.setState({
+						[id] : response.data[0].status
+					})
+					console.log(response.data)
+				}
+				else{
+					this.setState({
+						[id] : ""
+					})
+					}
+				}
+			)}
 	}
 	handleChange(event){
 		var value = event.target.value
@@ -73,16 +93,18 @@ class AttendanceTable extends Component {
 	}
 	render(){
 		console.log(this.state)
-		var students = this.props.students.map(i => <tr><td>{i.email}</td><td>
-			<form id={i._id} onSubmit={(event)=>this.markAttendance(event, i._id)}> 
-			  <input type="radio" name={i._id} value="here" onChange={this.handleChange} /> Here 
-			  <input type="radio" name={i._id} value="Absent_wExcuse" onChange={this.handleChange}  /> Absent w/ excuse 
-			  <input type="radio" name={i._id} value="Absent_noExcuse" onChange={this.handleChange}  />Absent 
-			  <input type="radio" name={i._id} value="Late_wExcuse" onChange={this.handleChange}  />Late 
-			  <input type="radio" name={i._id} value="Late_noExcuse"onChange={this.handleChange}   /> Late w/ excuse 
-			  <input type="submit" />
-			</form> 
-		</td></tr>)
+		var students = this.props.students.map(i =>
+			<tr><td>{i.email}</td><td>
+			<select name={i._id}  onChange={this.handleChange}>
+			  <option>Select</option>	 
+			  <option selected={this.state[i._id] === "Here"}>Here</option>
+			  <option selected={this.state[i._id] === "Late W/excuse"}>Late W/excuse</option>
+			  <option selected={this.state[i._id] === "Late No Excuse"}>Late No Excuse</option>
+			  <option selected={this.state[i._id] === "Absent W/excuse"}>Absent W/excuse</option>
+			  <option selected={this.state[i._id] === "Absent No Excuse"}>Absent No Excuse</option>
+			</select> 
+			<button onClick={(event)=>this.markAttendance(event, i._id)}>Mark</button>
+			</td></tr>)
 		return(
 				<div>
 					<table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">

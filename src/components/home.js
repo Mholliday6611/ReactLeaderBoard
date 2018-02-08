@@ -16,6 +16,7 @@ class Home extends Component {
 		}
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleChange = this.handleChange.bind(this)
+		this.handleStudentSubmit = this.handleStudentSubmit.bind(this)
 	}
 
 	handleChange(event){
@@ -41,11 +42,29 @@ class Home extends Component {
 				this.setState({
 					teacher:true
 				})
-			}else if(response.data.type === "student"){
-
 			}else if(response.data.type === "admin"){
 				this.setState({
 					admin:true
+				})
+			}
+		})
+		.catch(err=>{
+			console.log(err)
+		})
+	}
+	handleStudentSubmit(event){
+		event.preventDefault();
+		leaderApi.studentLogin({
+			email : this.state.email,
+			password : this.state.password
+		})
+		.then(response =>{
+			console.log(response)
+			localStorage.setItem("token", response.data.token);
+			localStorage.setItem("type", response.data.type);
+			if(response.data.type === "student"){
+				this.setState({
+					student:true
 				})
 			}
 		})
@@ -58,12 +77,12 @@ class Home extends Component {
 		if(this.state.admin){
 			return(<Redirect to="/admindashboard"/>)
 		}
-		if(this.state.teacher){
-			return(<Redirect to="/teacherdashboard"/>)
+		if(this.state.teacher || this.state.student){
+			return(<Redirect to="/dashboard"/>)
 		}
 		return(
-			<div className="section columns">
-				<form className="column is-half is-offset-one-quarter" onSubmit={this.handleSubmit}>
+			<div id="homebg" className="section columns">
+				<form id="loginForm"className="column is-half is-offset-one-quarter">
 					<div className="field">
 						<div className="control">
 							<input placeholder="Email" name="email" className="input is-medium"  onChange={this.handleChange}/>
@@ -74,7 +93,11 @@ class Home extends Component {
 							<input placeholder="Password" className="input is-medium" type="password" name="password" onChange={this.handleChange}/>
 						</div>
 					</div>
-						<center><input className="button is-right" type="submit" /></center>
+						<center>
+						<button className="button login is-right" onClick={this.handleSubmit}>Teacher Login </button>
+
+						<button className="button login is-left" onClick={this.handleStudentSubmit}> Student Login </button>
+						</center>
 				</form>
 			</div>
 			)

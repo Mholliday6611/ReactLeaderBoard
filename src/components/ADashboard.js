@@ -22,13 +22,15 @@ class ClassDisplay extends Component{
 	}
 	render(){
 		console.log(this.state)
-		var teachers = this.state.teachers.map(i=> i.email)
+		var teachers = this.state.teachers.map(i=> <p>{i.email}</p>)
 		return(
-			<div> 
-				<Link to={`/class/${this.props.id}`}>{this.props.name}</Link>
-				{this.props.description}
+			<div className="classDesc box radius-is-small"> 
+				<strong><Link to={`/class/${this.props.id}`}><p style={{fontSize:"30px"}}>{this.props.name}</p></Link></strong>
+				<i>{this.props.description}</i>
 				{teachers}
-				<AddTeacher id={this.props.id} up={this.updateTeachers} />
+				<div className="content">
+					<AddTeacher id={this.props.id} up={this.updateTeachers} />
+				</div>
 			</div>
 		)
 	}
@@ -124,9 +126,10 @@ class ADashboard extends Component {
 		var classDisplay = this.state.classes.map((item, index) =><ClassDisplay name={item.name} description={item.description} id={item._id} teachers={item.teachers} up={this.updateClasses}/>)
 		}
 		return(
-				<div>
+				<div className="container">
 					{classDisplay}
-					<button onClick={this.visibleTrue}>make class</button>
+					<br/>
+					<button style={{float:"bottom"}} className="button" onClick={this.visibleTrue}>make class</button>
 					{!this.state.visible ?
 						<div></div>
 				:

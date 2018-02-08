@@ -39,7 +39,7 @@ class AddTeacher extends Component {
 			<div>
 				<form onSubmit={this.handleSubmit}>
 					<input placeholder="Email" name="email"  onChange={this.handleChange}/>
-					<input type="submit" />
+					<input className="button" type="submit" />
 				</form>
 			</div>
 			)

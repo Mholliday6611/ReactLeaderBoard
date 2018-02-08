@@ -13,7 +13,7 @@ function ClassDisplay(props){
 		)
 }
 
-class TDashboard extends Component {
+class Dashboard extends Component {
 	constructor(){
 		super();
 		this.state = {
@@ -37,4 +37,4 @@ class TDashboard extends Component {
 	}
 }
 
-export default TDashboard
+export default Dashboard
