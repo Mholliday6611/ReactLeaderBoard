@@ -68,6 +68,10 @@ let leaderApi = {
 		let url = baseURL + "api/studentsInClass/" + data
 		return axios.get(url)
 	},
+	getAllStudents:function(){
+		let url = baseURL + "api/getAllStudents/"
+		return axios.get(url, header)
+	},
 	viewClass: function(data){
 		let url = baseURL + "api/class/" + data
 		return axios.get(url)
@@ -120,6 +124,15 @@ let leaderApi = {
 	getClassCompentency: function(end){
 		let url = baseURL + "api/getClassComp/" +end
 		return axios.get(url)
+	},
+	gradeTask: function(data, end){
+		let url = baseURL + "api/gradeTask/" + end
+		return axios.post(url,data,header)
+	},
+
+	getPoints: function(studentId, classId){
+		let url = baseURL + "api/points/" +studentId + "/" + classId
+		return axios.get(url, header)
 	},
 
 	//////////////////Attendance///////////////////////

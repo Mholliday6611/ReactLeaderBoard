@@ -86,42 +86,100 @@ class Task extends Component {
 	}
 }
 
-class GradeTask extends Component {
+class Grading extends Component {
 	constructor(){
 		super()
 
 		this.state = {
 
 		}
+		this.handleChange = this.handleChange.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
 	}
 
-	componentDidMount(){
-		leaderApi.getStudents(this.props.params)
-			.then(response =>{
-				this.setState({
-					students: response.data
-				})
-			}).then(response => {
-				var newStudents = this.state.students.map(i=>{
-					leaderApi.getSubmittedTask(i._id,this.props.id)
-						.then(response => i.submittedTask = response.data)
-						return i
-				})
-			})	
+	handleChange(event) {
+	    this.setState({value: event.target.value});
 	}
-	componentWillReceiveProps(nextProps){
+	handleSubmit(){
+		leaderApi.gradeTask({grade: this.state.value},this.props.task._id)
+		.then(
+				this.props.control()
+			)
 	}
 
 	render(){
-		var students = this.state.students.map(i=>{
-			<tr>
-				<td>{i.email}</td>
-				<td>{i.submittedTask.info}</td>
-			</tr>
-		})
 		return(
 				<div>
-					<table>
+					<h1>Grade Task</h1>
+					<input type="text" onChange={this.handleChange} />
+					<input type="submit" onClick={this.handleSubmit} />
+				</div>
+			)
+	}
+}
+class GradeTask extends Component {
+	constructor(){
+		super()
+
+		this.state = {
+			students: [],
+			open: false,
+			selectedTask: ""
+		}
+		this.updateStudents = this.updateStudents.bind(this)
+		this.controlModal =this.controlModal.bind(this)
+	}
+
+	componentDidMount(){
+		this.updateStudents()
+	}
+	updateStudents(){
+		var ids = this.props.students.map(i => i._id)
+		var submittedTasks;
+
+		leaderApi.getSubmittedTask(ids,this.props.id).
+			then(response =>{
+				submittedTasks = response.data
+
+				var students = this.props.students.map(i =>{
+					var task ={info:"Not Submmited"};
+
+					for(var j=0; j<submittedTasks.length;j++){
+						if(i._id == submittedTasks[j].student_id){
+							task = submittedTasks[j];
+						}
+					}
+					return ({
+						name: i.first_name + i.last_name + i.email,
+						submittedTask: task
+					})
+				})
+				this.setState({
+					students : students
+				})
+			})
+	}
+
+	controlModal(x){
+		if(this.state.open){
+			this.setState({
+				open: false
+			})
+		}else{
+			this.setState({
+				open: true,
+				selectedTask: x
+			})
+		}
+	}
+
+	render(){
+		console.log(this.state)
+		return(
+				<div>
+					<h1 onClick={this.props.end}>All Tasks</h1>
+					<table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+						<tbody>
 						<tr>
 							<th>
 								Student
@@ -130,8 +188,21 @@ class GradeTask extends Component {
 								Submission
 							</th>
 						</tr>
-						{students}
+						{
+							this.state.students.map(i => 
+								<tr>
+									<td>{i.name}</td>
+									<td onClick={()=>this.controlModal(i.submittedTask)}>{i.submittedTask.info}</td>
+								</tr>)
+						}
+						</tbody>
 					</table>
+					<Modal 
+					isOpen={this.state.open} 
+					onRequestClose={this.controlModal} 
+					className="tasks">
+							<Grading control={this.controlModal} task={this.state.selectedTask} />
+					</Modal>
 				</div>
 			)
 	}
@@ -246,6 +317,7 @@ class TaskManager extends Component {
 			compOpen: false,
 			taskOpen:false,
 			gradeTask: false,
+			gradeTaskEC: false,
 			currentlyGrading: "",
 
 			gradeEc: false,
@@ -266,6 +338,7 @@ class TaskManager extends Component {
 	componentDidMount(){
 		this.updateTasks()
 		this.updateComps()
+		this.updateStudents()
 	}
 
 	addTaskToComp(comp,task){
@@ -290,6 +363,14 @@ class TaskManager extends Component {
 				compentencies: info.data
 			})
 		})
+	}
+	updateStudents(){
+		leaderApi.getStudents(this.props.match.params.id)
+			.then(response => {
+				this.setState({
+					students: response.data
+				})
+			})
 	}
 
 	beginGrading(id){
@@ -341,7 +422,7 @@ class TaskManager extends Component {
 	render(){
 		console.log(this.state)
 		return(
-			<div>
+			<div className="container">
 				<div className="tabs is-fullwidth is-centered is-boxed">
 				  <ul>
 				    <li className={this.state.taskTab?"is-active" : ""}>
@@ -372,7 +453,7 @@ class TaskManager extends Component {
 				<div className="taskTab">
 					<h1>Task</h1>
 
-					{this.state.gradeTask? <GradeTask params={this.props.match.params.id} id={this.state.currentlyGrading} /> : <Task tasks={this.state.tasks} beginGrading={this.beginGrading} ec={false}/> 
+					{this.state.gradeTask? <GradeTask students={this.state.students} params={this.props.match.params.id} end={this.beginGrading} id={this.state.currentlyGrading} /> : <Task tasks={this.state.tasks} beginGrading={this.beginGrading} ec={false}/> 
 					}
 
 					<a className="button" name="taskOpen" onClick={()=>this.openModal("taskOpen")}>Add Task</a>
@@ -380,11 +461,10 @@ class TaskManager extends Component {
 				{this.state.ExtraCreditTab &&
 				<div className="ExtraCreditTab"> 
 					<h1>Extra Credit</h1>
-					<a className="a">All Tasks</a><a>Grade</a>
 					<br/>
 
-					<Task tasks={this.state.tasks} ec={true}/>
-					<GradeTask />
+					{this.state.gradeTaskEC? <GradeTask students={this.state.students} id={this.state.currentlyGrading} /> : <Task tasks={this.state.tasks} beginGrading={this.beginGrading} ec={true}/> 
+					}
 
 					<a className="button" name="ecOpen" onClick={()=>this.openModal("ecOpen")}>Add Extra Credit</a>
 				</div>}

@@ -33,10 +33,10 @@ class AddStudent extends Component {
 
 	render(){
 		return(
-			<div>
+			<div className="container">
 				<form onSubmit={this.handleSubmit}>
-					<input placeholder="Email" name="email"  onChange={this.handleChange}/>
-					<input type="submit" />
+					<input className="input" placeholder="Email" name="email"  onChange={this.handleChange}/>
+					<input className="button" type="submit" />
 				</form>
 			</div>
 			)

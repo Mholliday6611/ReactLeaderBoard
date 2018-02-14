@@ -4,8 +4,7 @@ body {
   font-family: sans-serif;
 }
 table{
-	margin-left: 40px;
-	margin-right: 90px;
+	width: 70%
 }
 .button{
 	margin-left: 10px;
