@@ -33,7 +33,7 @@ class App extends Component {
             <Route exact path="/class/taskmanager/:id" component={TaskManager} />
             <Route exact path="/class/attendance/:id" component={Attendance} />
 
-            <Route path='/profile/:name' component={Profile} />
+            <Route path='/profile/:id' component={Profile} />
 
             <Route path="/finishT/:id" component={FinishTeacher} />
             <Route path="/finishS/:id" component={FinishStudent} />

@@ -10,6 +10,16 @@ class Nav extends Component {
 		}
 	}
 
+	// componentDidMount(){
+	// 	const token = localStorage.getItem('token');
+
+	//     if(token){
+	      
+	//     }else{
+	      
+	//     }
+	// }
+
 	render(){
 		return(
 				<div className="navcolor" role="navigation">

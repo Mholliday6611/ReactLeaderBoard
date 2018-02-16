@@ -63,7 +63,7 @@ class ClassDisplay extends Component{
 		console.log(this.state)
 		console.log(this.props)
 		var teachers = this.state.teachers.map(i=> <li>{i.email}</li>)
-		var students = this.state.students.map(i => <tr><td>{i.email}{i.first_name}{i.last_name}</td><td>{i.points}</td></tr>)
+		var students = this.state.students.map(i => <tr><Link to={"/profile/" + i._id}><td>{i.email}{i.first_name}{i.last_name}</td></Link><td>{i.points}</td></tr>)
 		return(
 			<div>
 				<center>

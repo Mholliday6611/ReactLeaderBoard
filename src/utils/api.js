@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const baseURL = "https://leaderboardtesting.herokuapp.com/"
-var token = localStorage.getItem("token")
-var header = {headers: {'Authorization': "bearer " + token}}
+
+var header = function(){ return {headers: {'Authorization': "bearer " + localStorage.getItem("token")}} }
 
 let leaderApi = {
 	login: function(data){
@@ -19,6 +19,10 @@ let leaderApi = {
 			password: data.password
 		})
 	},
+	profile: function(id){
+		let url = baseURL + "api/profile/" +id
+		return axios.get(url,header())
+	},
 
 //////////////////////ADMIN////////////////////////////////////
 	createClass: function(data){
@@ -28,7 +32,7 @@ let leaderApi = {
 			description: data.description,
 			start: data.start,
 			end: data.end
-		}, header)
+		}, header())
 	},
 
 	addTeacher: function(data, end){
@@ -36,14 +40,14 @@ let leaderApi = {
 
 		return axios.put(url,{
 			email: data.email
-		}, header)
+		}, header())
 	},
 	addStudent: function(data, end){
 		let url = baseURL +"api/assignStudent/" + end
 
 		return axios.put(url,{
 			email: data.email
-		}, header)
+		}, header())
 	},
 
 ////////////////////////UPDATE PROFILE////////////////////////////////////
@@ -70,7 +74,7 @@ let leaderApi = {
 	},
 	getAllStudents:function(){
 		let url = baseURL + "api/getAllStudents/"
-		return axios.get(url, header)
+		return axios.get(url, header())
 	},
 	viewClass: function(data){
 		let url = baseURL + "api/class/" + data
@@ -79,26 +83,26 @@ let leaderApi = {
 
 	getDash: function(){
 		let url = baseURL + "api/Dash/"
-		return axios.get(url, header)
+		return axios.get(url, header())
 	},
 	getAdminDash: function(){
 		let url = baseURL + "api/adminDash/"
-		return axios.get(url, header)
+		return axios.get(url, header())
 	},
 
 
 /////////////////////TEACHER PANEL///////////////////////////////
 	createTask: function(data,end){
 		let url = baseURL + "api/createTask/" + end
-		return axios.post(url,data,header)
+		return axios.post(url,data,header())
 	},
 	createCompentency: function(data,end){
 		let url = baseURL + "api/createCompentency/" + end
-		return axios.post(url,data,header)
+		return axios.post(url,data,header())
 	},
 	addTasktoCompentency: function(comp,task){
 		let url = baseURL + "api/addTasktoComp/"+ comp +"/" + task
-		return axios.put(url,{},header)
+		return axios.put(url,{},header())
 	},
 
 	getStudentCompentency: function(){
@@ -107,15 +111,15 @@ let leaderApi = {
 	},
 	getSubmittedTask: function(studentId, taskId){
 		let url = baseURL + "api/getStudentTasks/" + studentId +"/"+ taskId
-		return axios.get(url, header)
+		return axios.get(url, header())
 	},
 	getYourSubmittedTask: function(id){
 		let url = baseURL + "api/getYourStudentTasks/" + id
-		return axios.get(url,header)
+		return axios.get(url,header())
 	},
 	submitTask: function(data,end){
 		let url = baseURL + "api/submitTask/" + end
-		return axios.post(url,data,header)
+		return axios.post(url,data,header())
 	},
 	getClassTask: function(end){
 		let url = baseURL + "api/getClassTasks/" + end
@@ -127,31 +131,31 @@ let leaderApi = {
 	},
 	gradeTask: function(data, end){
 		let url = baseURL + "api/gradeTask/" + end
-		return axios.post(url,data,header)
+		return axios.post(url,data,header())
 	},
 
 	getPoints: function(studentId, classId){
 		let url = baseURL + "api/points/" +studentId + "/" + classId
-		return axios.get(url, header)
+		return axios.get(url, header())
 	},
 
 	//////////////////Attendance///////////////////////
 
 	markAttendance: function(data, studentId, attendanceId, classId){
 		let url = baseURL + "api/markAttendance/" + studentId +"/"+attendanceId + "/" + classId
-		return axios.post(url, data, header)
+		return axios.post(url, data, header())
 	},
 	createAttendance: function(data, end){
 		let url = baseURL + "api/createAttendance/" + end
-		return axios.post(url, data, header)
+		return axios.post(url, data, header())
 	},
 	getAttendance: function(end){
 		let url = baseURL + "api/getClassAttendance/" + end
-		return axios.get(url, header)
+		return axios.get(url, header())
 	},
 	getStudentAttendance: function(studentId, attendanceId){
 		let url = baseURL + "api/getStudentAttendance/" + studentId + "/" + attendanceId
-		return axios.get(url, header)
+		return axios.get(url, header())
 	}
 
 }
