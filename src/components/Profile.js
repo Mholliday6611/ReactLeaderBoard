@@ -31,19 +31,32 @@ class App extends Component {
       assignments: false,
       profile: "",
       course: ""
-    };
+    }
+    this.handleChange = this.handleChange.bind(this)
+  }
+
+  handleChange(e){
+    var name = e.target.name
+    var value = e.target.value
+
+    this.setState({
+      [name] : value
+    })
   }
 
   componentDidMount(){
 		leaderApi.profile(this.props.match.params.id)
-		.then(function(profile){
-			this.setState({
-				profile: profile
-			})
-		})
+		.then(profile =>{
+      console.log(profile)
+        this.setState({
+          profile: profile.data.profile,
+          classes: profile.data.classes
+        })
+    })
 	}
 
   render() {
+    console.log(this.state)
     return (
       <div className="StudentProfile">
 
@@ -51,11 +64,11 @@ class App extends Component {
           <div className="column">
             <div className="Links">
                <div className="ProfileImage"><img src={this.state.profile.img} alt=""></img></div>
-               <div className="FullName"><h1>{this.state.profile.name}</h1></div>
+               <div className="FullName"><h1>{this.state.profile.first_name}<span></span>{this.state.profile.last_name}</h1></div>
               
               <div className="ProfSites">
-                  <div className="Linkedin"><center><a href="">Linkedin</a></center></div>
-                  <div><center><a href="">Github</a></center></div>
+                  <div className="Linkedin"><center><a href={this.state.profile.linkedin}>Linkedin</a></center></div>
+                  <div><center><a href={this.state.profile.github}>Github</a></center></div>
                   <div><center><a href="">Portfolio</a></center></div>
               </div>
 
@@ -71,16 +84,19 @@ class App extends Component {
 
         <center>
         <div className="CourseInfo">
-        <center><p1><b>{this.state.course.title}</b></p1></center>
-        <center><p1>{this.state.course.description}</p1></center>
-        </div>
-        </center>
+          <select name="course" onChange={this.handleChange}>
+            {this.state.classes && this.state.classes.map(i=> <option>{i.name}</option>)}
+          </select>
+          <center><p><b>{this.state.course.title}</b></p></center>
+          <center><p>{this.state.course.description}</p></center>
+          </div>
+          </center>
 
-         <br />
+           <br />
 
-         {/*<Assignments extraCredit={this.state.extraCredit} assignments={this.state.assignments} /> */}
+           {/*<Assignments extraCredit={this.state.extraCredit} assignments={this.state.assignments} /> */}
 
-         <br/>
+           <br/>
 
         
       
